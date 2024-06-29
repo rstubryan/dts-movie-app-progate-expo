@@ -16,7 +16,7 @@ const Search = (): JSX.Element => {
               activeOpacity={0.9}
               style={{
                 ...styles.topBar,
-                backgroundColor: item === selectedBar ? "#8978A4" : "#C0B4D5",
+                backgroundColor: item === selectedBar ? "#0077FF" : "#0077FF80",
                 borderTopLeftRadius: index === 0 ? 100 : 0,
                 borderBottomLeftRadius: index === 0 ? 100 : 0,
                 borderTopRightRadius: index === 1 ? 100 : 0,
@@ -49,11 +49,11 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     width: "50%",
-    height: 60,
+    height: 35,
   },
   topBarLabel: {
     color: "white",
-    fontSize: 20,
+    fontSize: 14,
     fontWeight: "400",
     textTransform: "capitalize",
   },
