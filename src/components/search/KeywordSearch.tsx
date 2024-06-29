@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { View, TextInput, FlatList, Text } from "react-native";
 import { API_ACCESS_TOKEN } from "@env";
 
@@ -11,14 +11,27 @@ const KeywordSearch = () => {
   const [keyword, setKeyword] = useState("");
   const [movies, setMovies] = useState<Movie[]>([]);
   const [notFound, setNotFound] = useState(false);
+  const abortController = useRef(new AbortController());
+  const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (keyword) {
-      searchMovies();
-    } else {
-      setMovies([]);
-      setNotFound(false);
+    if (debounceTimeoutRef.current) {
+      clearTimeout(debounceTimeoutRef.current);
     }
+    debounceTimeoutRef.current = setTimeout(() => {
+      if (keyword) {
+        searchMovies();
+      } else {
+        setMovies([]);
+        setNotFound(false);
+      }
+    }, 300);
+
+    // Cleanup function to cancel ongoing fetch request
+    return () => {
+      abortController.current.abort();
+      abortController.current = new AbortController();
+    };
   }, [keyword]);
 
   const searchMovies = async () => {
@@ -29,10 +42,12 @@ const KeywordSearch = () => {
         accept: "application/json",
         Authorization: `Bearer ${API_ACCESS_TOKEN}`,
       },
+      signal: abortController.current.signal, // Pass the abort signal to the fetch request
     };
 
     fetch(url, options)
       .then(async (response) => {
+        if (!response.ok) throw new Error("Network response was not ok");
         const data = await response.json();
         if (data.results.length > 0) {
           setMovies(data.results);
@@ -42,9 +57,7 @@ const KeywordSearch = () => {
           setNotFound(true);
         }
       })
-      .catch((errorResponse) => {
-        console.log(errorResponse);
-      });
+      .catch((error) => {});
   };
 
   const handleInputChange = (text: string) => {
@@ -54,6 +67,16 @@ const KeywordSearch = () => {
   return (
     <View>
       <TextInput
+        style={{
+          height: 40,
+          borderColor: "gray",
+          borderWidth: 1,
+          backgroundColor: "white",
+          marginTop: 10,
+          marginBottom: 10,
+          padding: 10,
+          borderRadius: 25,
+        }}
         value={keyword}
         onChangeText={handleInputChange}
         placeholder="Search by movie name"
