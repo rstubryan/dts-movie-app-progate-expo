@@ -38,7 +38,7 @@ const Home = (): JSX.Element => {
             key={movieList.title}
           />
         ))}
-        <StatusBar translucent={false} />
+        <StatusBar translucent={true} />
       </View>
     </ScrollView>
   );
@@ -46,6 +46,7 @@ const Home = (): JSX.Element => {
 
 const styles = StyleSheet.create({
   container: {
+    padding: 16,
     marginTop: StatusBar.currentHeight ?? 32,
     alignItems: "center",
     justifyContent: "center",

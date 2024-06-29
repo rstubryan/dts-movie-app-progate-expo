@@ -42,8 +42,6 @@ const MovieList = ({ title, path, coverType }: MovieListProps): JSX.Element => {
       });
   };
 
-  console.log(movies);
-
   return (
     <View>
       <View style={styles.header}>
@@ -81,9 +79,9 @@ const styles = StyleSheet.create({
   },
   purpleLabel: {
     width: 20,
-    height: 40,
+    height: 20,
     borderRadius: 20,
-    backgroundColor: "#8978A4",
+    backgroundColor: "#0077FF",
     marginRight: 12,
   },
   title: {
