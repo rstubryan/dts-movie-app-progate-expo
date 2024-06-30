@@ -241,7 +241,7 @@ const MovieDetail = ({ route }: any): JSX.Element => {
                   Language
                 </Text>
                 <Text style={{ fontSize: 14 }}>
-                  {movie.spoken_languages[0].english_name}
+                  {movie.spoken_languages[0]?.english_name || "-"}
                 </Text>
               </View>
             </View>
