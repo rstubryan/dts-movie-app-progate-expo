@@ -1,19 +1,31 @@
-import React, { useEffect, useState } from "react";
-import { View, StyleSheet, FlatList, Alert } from "react-native";
+import React, { useEffect, useState, useCallback } from "react";
+import { View, StyleSheet, FlatList, TouchableOpacity } from "react-native";
 import { API_ACCESS_TOKEN } from "@env";
 import { Picker } from "@react-native-picker/picker";
 import MovieItem from "../movies/MovieItem";
 import type { Movie } from "../../types/app";
+import { useNavigation } from "@react-navigation/native";
 
 interface Category {
   id: number;
   name: string;
 }
 
+type NavigateFunction = (routeName: string, params: { id: number }) => void;
+
+type CoverType = "poster" | "backdrop";
+
+type MovieItemWithPressProps = {
+  movie: Movie;
+  size: { width: number; height: number; marginBottom: number };
+  coverType: CoverType;
+};
+
 const CategorySearch = () => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState("");
   const [movies, setMovies] = useState<Movie[]>([]);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const getCategories = async () => {
@@ -53,11 +65,34 @@ const CategorySearch = () => {
       .then(async (response) => {
         const data = await response.json();
         setMovies(data.results);
+        console.log(data.results);
       })
       .catch((errorResponse) => {
         console.log(errorResponse);
       });
   };
+
+  const MovieItemWithPress: React.FC<MovieItemWithPressProps> = ({
+    movie,
+    size,
+    coverType,
+  }) => (
+    <TouchableOpacity
+      onPress={() => {
+        (navigation.navigate as NavigateFunction)("MovieDetail", {
+          id: movie.id,
+        });
+      }}
+    >
+      <View pointerEvents="none">
+        <MovieItem
+          movie={movie as Movie}
+          size={size}
+          coverType={coverType as CoverType}
+        />
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <View style={styles.container}>
@@ -66,24 +101,25 @@ const CategorySearch = () => {
         onValueChange={(itemValue) => {
           setSelectedCategory(itemValue);
           getMoviesByGenre(itemValue);
-          Alert.alert(`Selected genre id is: ${itemValue}`); // Menampilkan id genre yang dipilih
         }}
       >
         {categories.map((item) => (
           <Picker.Item key={item.id} label={item.name} value={item.id} />
         ))}
       </Picker>
-      <FlatList
-        data={movies}
-        renderItem={({ item }) => (
-          <MovieItem
-            movie={item}
-            size={{ width: 100, height: 160 }}
-            coverType="poster"
-          />
-        )}
-        keyExtractor={(item: Movie) => item.id.toString()}
-      />
+      {movies.length > 0 && (
+        <FlatList
+          data={movies}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <MovieItemWithPress
+              movie={item}
+              size={{ width: 200, height: 300, marginBottom: 10 }}
+              coverType="poster"
+            />
+          )}
+        />
+      )}
     </View>
   );
 };
