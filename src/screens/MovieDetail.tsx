@@ -148,7 +148,9 @@ const MovieDetail = ({ route }: any): JSX.Element => {
                   <Text
                     style={{ fontSize: 24, fontWeight: "bold", color: "white" }}
                   >
-                    {movie.title}
+                    {movie.title.length > 20
+                      ? `${movie.title.substring(0, 20)}...`
+                      : movie.title}
                   </Text>
                   <View
                     style={{
@@ -191,6 +193,14 @@ const MovieDetail = ({ route }: any): JSX.Element => {
             contentContainerStyle={{ paddingBottom: 220 }}
           >
             <View style={{ marginBottom: 4 }}>
+              <Text
+                style={{ fontSize: 14, fontWeight: "bold", marginBottom: 4 }}
+              >
+                Movie
+              </Text>
+              <Text style={{ fontSize: 14, marginBottom: 4 }}>
+                {movie.title}
+              </Text>
               <Text
                 style={{ fontSize: 14, fontWeight: "bold", marginBottom: 4 }}
               >
