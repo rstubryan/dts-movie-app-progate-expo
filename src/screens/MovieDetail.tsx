@@ -6,6 +6,7 @@ import MovieList from "../components/movies/MoviesList";
 import { API_ACCESS_TOKEN } from "@env";
 import { LinearGradient } from "expo-linear-gradient";
 import { useNavigation } from "@react-navigation/native";
+import { ScrollView } from "react-native";
 
 interface Movie {
   title: string;
@@ -181,77 +182,85 @@ const MovieDetail = ({ route }: any): JSX.Element => {
               </View>
             </LinearGradient>
           </ImageBackground>
-          <View style={{ paddingLeft: 16, paddingRight: 16 }}>
-            <View style={{ marginBottom: 16 }}>
-              <View style={{ marginBottom: 4 }}>
-                <Text
-                  style={{ fontSize: 14, fontWeight: "bold", marginBottom: 4 }}
-                >
-                  Genre
-                </Text>
-                <View
-                  style={{ flexDirection: "row", flexWrap: "wrap", gap: 4 }}
-                >
-                  {movie.genres.map((genre, index) => (
-                    <Text
-                      key={index}
-                      style={{
-                        fontSize: 14,
-                        backgroundColor: "white",
-                        padding: 4,
-                        paddingLeft: 10,
-                        paddingRight: 10,
-                        borderRadius: 25,
-                        marginRight: 4,
-                        marginBottom: 4,
-                      }}
-                    >
-                      {genre.name}
-                    </Text>
-                  ))}
-                </View>
-              </View>
-              <View
-                style={{
-                  flexDirection: "row",
-                  justifyContent: "space-between",
-                }}
-              >
-                <View style={{ marginBottom: 8 }}>
-                  <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-                    Runtime
-                  </Text>
-                  <Text style={{ fontSize: 14 }}>
-                    {Math.floor(movie.runtime / 60)}h {movie.runtime % 60}m
-                  </Text>
-                </View>
-                <View style={{ marginBottom: 4 }}>
-                  <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-                    Release Date
-                  </Text>
-                  <Text style={{ fontSize: 14 }}>{movie.release_date}</Text>
-                </View>
-                <View style={{ marginBottom: 4 }}>
-                  <Text style={{ fontSize: 14, fontWeight: "bold" }}>
-                    Language
-                  </Text>
-                  <Text style={{ fontSize: 14 }}>
-                    {movie.spoken_languages[0].english_name}
-                  </Text>
-                </View>
-              </View>
+          <ScrollView
+            style={{
+              marginBottom: 16,
+              paddingLeft: 16,
+              paddingRight: 16,
+            }}
+            contentContainerStyle={{ paddingBottom: 220 }}
+          >
+            <View style={{ marginBottom: 4 }}>
               <Text
-                style={{ fontSize: 14, textAlign: "justify", lineHeight: 20 }}
+                style={{ fontSize: 14, fontWeight: "bold", marginBottom: 4 }}
               >
-                {movie.overview}
+                Genre
               </Text>
+              <View style={{ flexDirection: "row", flexWrap: "wrap", gap: 4 }}>
+                {movie.genres.map((genre, index) => (
+                  <Text
+                    key={index}
+                    style={{
+                      fontSize: 14,
+                      backgroundColor: "white",
+                      padding: 4,
+                      paddingLeft: 10,
+                      paddingRight: 10,
+                      borderRadius: 25,
+                      marginRight: 4,
+                      marginBottom: 4,
+                    }}
+                  >
+                    {genre.name}
+                  </Text>
+                ))}
+              </View>
             </View>
+            <View
+              style={{
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <View style={{ marginBottom: 8 }}>
+                <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                  Runtime
+                </Text>
+                <Text style={{ fontSize: 14 }}>
+                  {Math.floor(movie.runtime / 60)}h {movie.runtime % 60}m
+                </Text>
+              </View>
+              <View style={{ marginBottom: 4 }}>
+                <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                  Release Date
+                </Text>
+                <Text style={{ fontSize: 14 }}>{movie.release_date}</Text>
+              </View>
+              <View style={{ marginBottom: 4 }}>
+                <Text style={{ fontSize: 14, fontWeight: "bold" }}>
+                  Language
+                </Text>
+                <Text style={{ fontSize: 14 }}>
+                  {movie.spoken_languages[0].english_name}
+                </Text>
+              </View>
+            </View>
+            <Text
+              style={{
+                fontSize: 14,
+                textAlign: "justify",
+                lineHeight: 20,
+                paddingBottom: 16,
+              }}
+            >
+              {movie.overview}
+            </Text>
             <MovieList
               title="Recommendations"
               coverType="poster"
               path={`movie/${id}/recommendations`}
             />
-          </View>
+          </ScrollView>
         </>
       )}
     </View>
