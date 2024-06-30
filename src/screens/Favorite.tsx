@@ -94,7 +94,7 @@ export default function Favorite() {
         </View>
       ) : (
         <FlatList
-          contentContainerStyle={{ paddingBottom: 280 }}
+          contentContainerStyle={{ paddingBottom: 0 }}
           numColumns={3}
           data={favoriteMovies}
           renderItem={({ item }) => (
