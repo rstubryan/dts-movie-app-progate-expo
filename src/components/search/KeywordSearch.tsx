@@ -1,18 +1,40 @@
 import React, { useState, useEffect, useRef } from "react";
-import { View, TextInput, FlatList, Text } from "react-native";
+import {
+  View,
+  TextInput,
+  FlatList,
+  Text,
+  TouchableOpacity,
+} from "react-native";
 import { API_ACCESS_TOKEN } from "@env";
+import MovieItem from "../movies/MovieItem";
+import { useNavigation } from "@react-navigation/native";
+import type { Movie } from "../../types/app";
 
-type Movie = {
-  id: number;
-  title: string;
+type NavigateFunction = (routeName: string, params: { id: number }) => void;
+
+type CoverType = "poster" | "backdrop";
+
+type MovieItemWithPressProps = {
+  movie: Movie;
+  size: { width: number; height: number; marginBottom: number };
+  coverType: CoverType;
 };
 
 const KeywordSearch = () => {
+  const navigation = useNavigation();
   const [keyword, setKeyword] = useState("");
   const [movies, setMovies] = useState<Movie[]>([]);
   const [notFound, setNotFound] = useState(false);
   const abortController = useRef(new AbortController());
   const debounceTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const coverImageSize = {
+    poster: {
+      width: 117,
+      height: 160,
+      marginBottom: 4,
+    },
+  };
 
   useEffect(() => {
     if (debounceTimeoutRef.current) {
@@ -42,7 +64,7 @@ const KeywordSearch = () => {
         accept: "application/json",
         Authorization: `Bearer ${API_ACCESS_TOKEN}`,
       },
-      signal: abortController.current.signal, // Pass the abort signal to the fetch request
+      signal: abortController.current.signal,
     };
 
     fetch(url, options)
@@ -57,12 +79,34 @@ const KeywordSearch = () => {
           setNotFound(true);
         }
       })
-      .catch((error) => {});
+      .catch(() => {});
   };
 
   const handleInputChange = (text: string) => {
     setKeyword(text);
   };
+
+  const MovieItemWithPress: React.FC<MovieItemWithPressProps> = ({
+    movie,
+    size,
+    coverType,
+  }) => (
+    <TouchableOpacity
+      onPress={() => {
+        (navigation.navigate as NavigateFunction)("MovieDetail", {
+          id: movie.id,
+        });
+      }}
+    >
+      <View pointerEvents="none">
+        <MovieItem
+          movie={movie as Movie}
+          size={size}
+          coverType={coverType as CoverType}
+        />
+      </View>
+    </TouchableOpacity>
+  );
 
   return (
     <View>
@@ -83,9 +127,17 @@ const KeywordSearch = () => {
       />
       {notFound && <Text>Movie not found</Text>}
       <FlatList
+        contentContainerStyle={{ paddingBottom: 280 }}
+        numColumns={3}
         data={movies}
+        renderItem={({ item }) => (
+          <MovieItemWithPress
+            movie={item}
+            size={coverImageSize.poster}
+            coverType="poster"
+          />
+        )}
         keyExtractor={(item: Movie) => item.id.toString()}
-        renderItem={({ item }: { item: Movie }) => <Text>{item.title}</Text>}
       />
     </View>
   );

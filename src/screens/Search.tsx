@@ -38,6 +38,7 @@ const Search = (): JSX.Element => {
 
 const styles = StyleSheet.create({
   container: {
+    marginTop: 52,
     padding: 16,
   },
   topBarContainer: {
